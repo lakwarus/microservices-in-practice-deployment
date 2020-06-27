@@ -12,7 +12,11 @@ map<x:Order> orderMap = {};
 @kubernetes:Deployment {
     name: "ordermgt",
     livenessProbe: true,
-    readinessProbe: true
+    readinessProbe: true,
+    push: true,
+    image: "index.docker.io/$env{DOCKER_USERNAME}/ecommerce-ordermgt:1.0",
+    username: "$env{DOCKER_USERNAME}",
+    password: "$env{DOCKER_PASSWORD}"
 }
 service OrderMgt on new http:Listener(8081) {
 

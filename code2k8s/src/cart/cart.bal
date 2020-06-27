@@ -2,14 +2,13 @@ import ballerina/http;
 import lakwarus/commons as x;
 import ballerinax/java.jdbc;
 import ballerina/jsonutils;
+import ballerina/config;
 import ballerina/kubernetes;
 
 jdbc:Client dbClient = new ({
     url: "jdbc:mysql://mysql-svc:3306/ECOM_DB?serverTimezone=UTC",
-    username: "root",
-    password: "root",
-    //username: config:getAsString("db.username"),
-    //password: config:getAsString("db.password"),
+    username: config:getAsString("db.username"),
+    password: config:getAsString("db.password"),
     poolOptions: { maximumPoolSize: 5 },
     dbOptions: { useSSL: false }
 });
@@ -21,7 +20,13 @@ jdbc:Client dbClient = new ({
     name: "cart-svc"
 }
 @kubernetes:Deployment {
-    name: "cart"
+    name: "cart",
+    livenessProbe: true,
+    readinessProbe: true,
+    push: true,
+    image: "index.docker.io/$env{DOCKER_USERNAME}/ecommerce-cart:1.0",
+    username: "$env{DOCKER_USERNAME}",
+    password: "$env{DOCKER_PASSWORD}"
 }
 service ShoppingCart on new http:Listener(8080) {
 

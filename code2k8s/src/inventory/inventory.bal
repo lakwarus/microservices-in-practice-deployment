@@ -1,21 +1,31 @@
 import ballerina/http;
 import ballerinax/java.jdbc;
 import ballerina/jsonutils;
+import ballerina/config;
 import ballerina/kubernetes;
 
 jdbc:Client dbClient = new ({
     url: "jdbc:mysql://mysql-svc:3306/ECOM_DB?serverTimezone=UTC",
-    username: "root",
-    password: "root"
+    username: config:getAsString("db.username"),
+    password: config:getAsString("db.password"),
+    poolOptions: { maximumPoolSize: 5 },
+    dbOptions: { useSSL: false }
 });
 
+@kubernetes:ConfigMap {
+    conf: "src/inventory/ballerina.conf"
+}
 @kubernetes:Service {
     name: "inventory-svc"
 }
 @kubernetes:Deployment {
     name: "inventory",
     livenessProbe: true,
-    readinessProbe: true
+    readinessProbe: true,
+    push: true,
+    image: "index.docker.io/$env{DOCKER_USERNAME}/ecommerce-inventory:1.0",
+    username: "$env{DOCKER_USERNAME}",
+    password: "$env{DOCKER_PASSWORD}"
 }
 service Inventory on new http:Listener(8084) {
 

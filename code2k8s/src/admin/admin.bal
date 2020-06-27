@@ -18,6 +18,10 @@ http:Client invClient = new("http://inventory-svc:8084/Inventory");
     name: "admin",
     livenessProbe: true,
     readinessProbe: true
+    push: true,
+    image: "index.docker.io/$env{DOCKER_USERNAME}/ecommerce-admin:1.0",
+    username: "$env{DOCKER_USERNAME}",
+    password: "$env{DOCKER_PASSWORD}"
 }
 service Admin on new http:Listener(8085) {
 

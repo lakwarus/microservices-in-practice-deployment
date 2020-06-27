@@ -12,7 +12,11 @@ http:Client orderMgtClient = new("http://ordermgt-svc:8081/OrderMgt");
 @kubernetes:Deployment {
     name: "billing",
     livenessProbe: true,
-    readinessProbe: true
+    readinessProbe: true,
+    push: true,
+    image: "index.docker.io/$env{DOCKER_USERNAME}/ecommerce-billing:1.0",
+    username: "$env{DOCKER_USERNAME}",
+    password: "$env{DOCKER_PASSWORD}"
 }
 service Billing on new http:Listener(8082) {
 
