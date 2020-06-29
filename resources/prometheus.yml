@@ -1,0 +1,8 @@
+global:
+  scrape_interval:     5s
+  evaluation_interval: 5s
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['admin-svc-prometheus:9797','billing-svc-prometheus:9797','cart-svc-prometheus:9797','inventory-svc-prometheus:9797','ordermgt-svc-prometheus:9797','shipping-svc-prometheus:9797']
